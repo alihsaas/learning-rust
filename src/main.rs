@@ -1,39 +1,55 @@
 use std::io;
-use std::cmp::Ordering;
-use rand::Rng;
+
+fn fah_to_cel(tem: i16) -> i16 {
+	(tem - 32) * 5/9
+}
+
+fn cel_to_fah(tem: i16) -> i16 {
+	(tem * 9/5) + 32
+}
 
 fn main() {
-    println!("Guess the number!");
 
-    let secret_number = rand::thread_rng().gen_range(1, 101);
+	loop {
+		println!("Fahrenheit (F) or Celsius (C)");
 
-    loop {
-        println!("Please input your guess.");
+		let mut scale = String::new();
 
-        let mut guess = String::new();
+		io::stdin()
+			.read_line(&mut scale)
+			.expect("Invalid scale passed");
 
-        io::stdin()
-            .read_line(&mut guess)
-            .expect("Failed to read line");
+		let scale = scale.trim();
 
-        if guess.trim() == "quit" {
-            break;
-        }
+		if scale == "quit" {
+			break;
+		} else if scale != "F" && scale != "C" {
+			panic!("Invalid scale passed")
+		}
 
-        let guess: u32 = match guess.trim().parse() {
-            Ok(num) => num,
-            Err(_) => continue,
-        };
+		println!("Enter Temperature");
 
-        match guess.cmp(&secret_number) {
-            Ordering::Less => println!("Less than secret num"),
-            Ordering::Greater => println!("Greater than secret num"),
-            Ordering::Equal => {
-                println!("Horray, you guessed {}!!", secret_number);
-                break
-            },
-        }
+		let mut input_temperature = String::new();
 
-    }
+		io::stdin()
+			.read_line(&mut input_temperature)
+			.expect("Invalid input passed");
 
+		let input_temperature: i16 = match input_temperature.trim().parse() {
+			Ok(num) => num,
+			Err(err) => {
+				println!("{}", err);
+				continue;
+			},
+		};
+
+		let result = if scale == "F" {
+			format!("{}°F", fah_to_cel(input_temperature))
+		} else { 
+			format!("{}°C", cel_to_fah(input_temperature))
+		};
+
+		println!("{}", result);
+
+	}
 }
