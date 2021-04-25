@@ -1,39 +1,38 @@
 use std::io;
-use std::cmp::Ordering;
-use rand::Rng;
+
+fn get_fibonacci(num: i128) -> i128 {
+	if num == 0 || num == 1 {
+		num
+	} else {
+		get_fibonacci(num - 1) + get_fibonacci(num - 2)
+	}
+}
 
 fn main() {
-    println!("Guess the number!");
-
-    let secret_number = rand::thread_rng().gen_range(1, 101);
 
     loop {
-        println!("Please input your guess.");
+        println!("Please enter the index to get the fibonacci number for");
 
-        let mut guess = String::new();
+        let mut at_index = String::new();
 
         io::stdin()
-            .read_line(&mut guess)
+            .read_line(&mut at_index)
             .expect("Failed to read line");
 
-        if guess.trim() == "quit" {
+        let at_index = at_index.trim();
+
+        if at_index == "quit" {
             break;
         }
 
-        let guess: u32 = match guess.trim().parse() {
+        let at_index: i128 = match at_index.parse() {
             Ok(num) => num,
-            Err(_) => continue,
+            Err(err) => {
+            	println!("{}", err);
+            	continue;
+            },
         };
 
-        match guess.cmp(&secret_number) {
-            Ordering::Less => println!("Less than secret num"),
-            Ordering::Greater => println!("Greater than secret num"),
-            Ordering::Equal => {
-                println!("Horray, you guessed {}!!", secret_number);
-                break
-            },
-        }
-
+        println!("Fibonacci Number {}", get_fibonacci(at_index))
     }
-
 }
